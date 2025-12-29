@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APT: Auxiliary Prompt Tuning & Big Data</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- RESET & GLOBAL STYLES --- */
+        :root {
+            --primary-gradient: linear-gradient(135deg, #92b6f8 0%, #7088af 100%);
+            --accent-color: #e74c3c;
+            --text-dark: #333333;
+            --text-light: #555555;
+            --white: #ffffff;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-dark);
+            background-color: #f9f9f9;
+            line-height: 1.6;
+        }
+
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+
+        /* --- HEADER & HERO SECTION --- */
+        header {
+            background: var(--primary-gradient);
+            color: var(--white);
+            padding-bottom: 60px;
+            position: relative;
+        }
+
+        /* Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-weight: 700;
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+        }
+        .logo span { color: var(--accent-color); }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            font-size: 0.95rem;
+            font-weight: 500;
+            opacity: 0.9;
+            transition: opacity 0.3s;
+        }
+
+        .nav-links a:hover { opacity: 1; text-decoration: underline; }
+
+        /* Hero Content */
+        .hero {
+            text-align: center;
+            padding: 60px 20px 40px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            line-height: 1.2;
+        }
+
+        .hero p.subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+
+        .divider {
+            width: 60px;
+            height: 4px;
+            background-color: var(--accent-color);
+            margin: 0 auto 50px;
+            border-radius: 2px;
+        }
+
+        /* Feature Cards */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .feature-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 25px;
+            border-radius: 12px;
+            color: var(--white);
+            text-align: left;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .feature-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .feature-card p {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            line-height: 1.4;
+        }
+
+        /* --- MAIN CONTENT --- */
+        main {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        section {
+            margin-bottom: 60px;
+            background: var(--white);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            color: #1e3c72;
+            margin-bottom: 20px;
+            border-left: 5px solid var(--accent-color);
+            padding-left: 15px;
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            margin-top: 25px;
+            margin-bottom: 10px;
+            color: #444;
+        }
+
+        p {
+            margin-bottom: 15px;
+            color: var(--text-light);
+            text-align: justify;
+        }
+
+        /* Image styling */
+        .img-container {
+            width: 100%;
+            margin: 20px 0;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #eee;
+        }
+
+        .img-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .caption {
+            text-align: center;
+            font-size: 0.85rem;
+            color: #888;
+            margin-top: 10px;
+            font-style: italic;
+            display: block; /* Đảm bảo caption luôn hiển thị dưới ảnh trong slide */
+        }
+
+        /* --- CSS MỚI CHO IMAGE CAROUSEL (SLIDESHOW) --- */
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 1px solid #eee;
+            overflow: hidden; /* Để bo tròn góc cả mũi tên nếu cần */
+            background: #fff; /* Nền trắng cho container */
+        }
+
+        /* Ẩn các slide mặc định */
+        .carousel-slide {
+            display: none;
+            padding-bottom: 15px; /* Khoảng cách cho caption bên trong */
+        }
+
+        /* Hiển thị ảnh trong slide */
+        .carousel-slide img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Nút mũi tên Previous và Next */
+        .prev, .next {
+            cursor: pointer;
+            position: absolute;
+            top: 45%; /* Căn giữa theo chiều dọc ảnh (ước lượng) */
+            width: auto;
+            padding: 16px;
+            margin-top: -22px;
+            color: white;
+            font-weight: bold;
+            font-size: 24px;
+            transition: 0.3s ease;
+            border-radius: 0 3px 3px 0;
+            user-select: none;
+            background-color: rgba(0,0,0,0.3); /* Nền mờ cho dễ nhìn */
+        }
+
+        /* Vị trí nút Next ở bên phải */
+        .next {
+            right: 0;
+            border-radius: 3px 0 0 3px;
+        }
+
+        /* Hiệu ứng hover nút */
+        .prev:hover, .next:hover {
+            background-color: var(--accent-color); /* Dùng màu cam nhấn khi hover */
+        }
+
+        /* Hiệu ứng fade chuyển cảnh nhẹ nhàng */
+        .fade {
+            animation-name: fade;
+            animation-duration: 0.5s;
+        }
+
+        @keyframes fade {
+            from {opacity: .6} 
+            to {opacity: 1}
+        }
+        /* --------------------------------------------- */
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.95rem;
+        }
+        th, td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+        }
+        th {
+            background-color: #f4f4f4;
+            color: #333;
+            font-weight: 600;
+        }
+        .highlight {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #333;
+            color: #bbb;
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .hero h1 { font-size: 2rem; }
+            .features-grid { grid-template-columns: 1fr; }
+            .prev, .next { padding: 10px; font-size: 18px; } /* Nút nhỏ hơn trên mobile */
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <nav class="navbar">
+            <div class="logo">APT: <span>Auxiliary Prompt Tuning</span></div>
+            <div class="nav-links">
+                <a href="#intro">Giới thiệu</a>
+                <a href="#architecture">Kiến trúc</a>
+                <a href="#bigdata">Big Data</a>
+                <a href="#results">Kết quả</a>
+                <a href="https://github.com/username/repo" target="_blank">Github Code</a>
+            </div>
+        </nav>
+
+        <div class="hero">
+            <h1>Auxiliary Prompt Tuning: Tăng cường Phát hiện OOD Few-Shot với Kiến trúc Big Data</h1>
+            <p class="subtitle">Ứng dụng MapReduce để tối ưu hóa huấn luyện mô hình Vision-Language trên tài nguyên phần cứng giới hạn</p>
+            <div class="divider"></div>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <h3>MapReduce Pipeline</h3>
+                <p>Xử lý dữ liệu phụ trợ quy mô lớn (Tiny ImageNet) thành vector đặc trưng offline, loại bỏ nút thắt I/O.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Auxiliary Prompt Tuning</h3>
+                <p>Cơ chế PairReg tận dụng tri thức từ dữ liệu nền để tinh chỉnh ranh giới phân lớp chính xác hơn.</p>
+            </div>
+            <div class="feature-card">
+                <h3>High Performance</h3>
+                <p>Tốc độ huấn luyện siêu tốc: 50 Epochs chỉ trong 48 phút với độ chính xác 94.8%.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Resource Efficient</h3>
+                <p>Giảm 88% VRAM tiêu thụ, cho phép chạy thực nghiệm trên Google Colab Free hoặc Laptop.</p>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section id="intro">
+            <h2>Lý thuyết tổng quát về APT</h2>
+            <p><strong>1. Đặt vấn đề:</strong> Các mô hình Vision-Language lớn như CLIP có khả năng Zero-shot tuyệt vời, nhưng thường gặp khó khăn trong việc phân biệt các mẫu "Out-of-Distribution" (OOD) - những vật thể lạ chưa từng thấy trong quá trình huấn luyện. Các phương pháp tinh chỉnh (Fine-tuning) truyền thống lại tốn quá nhiều tài nguyên và dễ làm mất đi tri thức tổng quát của mô hình.</p>
+            
+            <p><strong>2. Giải pháp APT (Auxiliary Prompt Tuning):</strong> Chúng tôi đề xuất một phương pháp tiếp cận mới, sử dụng dữ liệu phụ trợ (Auxiliary Data) thông qua cơ chế học Prompt nhẹ (Prompt Tuning). Thay vì tinh chỉnh toàn bộ mô hình, APT chỉ học một lượng tham số rất nhỏ, kết hợp với dữ liệu nền để "ép" mô hình nhận diện rõ ràng ranh giới giữa cái đã biết (ID) và cái chưa biết (OOD).</p>
+        </section>
+
+        <section id="architecture">
+            <h2>Kiến trúc Hệ thống (Proposed Framework)</h2>
+            <p>Mô hình APT hoạt động dựa trên việc tinh chỉnh các Prompt học được (<i>W</i><sub>1</sub> &hellip; <i>W</i><sub>N</sub>) mà không làm thay đổi trọng số của mạng xương sống, kết hợp với cơ chế tách vùng ngữ nghĩa thông minh.</p>            
+            
+            <p style="font-style: italic; font-size: 0.9rem; color: var(--accent-color); margin-bottom: 10px;">(Sử dụng mũi tên < > ở hai bên ảnh để xem chi tiết từng bước)</p>
+
+            <div class="carousel-container">
+                
+                <div class="carousel-slide fade">
+                    <img src="architecture.png" alt="Tổng quan kiến trúc APT"> <p class="caption">Hình 1: Tổng quan kiến trúc Auxiliary Prompt Tuning (APT)</p>
+                </div>
+
+                <div class="carousel-slide fade">
+                    <img src="encoder.png" alt="Bước 1: Trích xuất đặc trưng"> 
+                    <p class="caption">Hình 2: Bước 1 - Đầu vào và mã hoá.</p>
+                </div>
+
+                <div class="carousel-slide fade">
+                    <img src="ALK.png" alt="Bước 2: Cơ chế chọn lọc ALK">
+                    <p class="caption">Hình 3: Bước 2 - Cơ chế chọn lọc ALK sử dụng KL Divergence để phân tách vùng Tiền cảnh (Foreground) và Hậu cảnh (Background).</p>
+                </div>
+
+                <div class="carousel-slide fade">
+                    <img src="pairReg.png" alt="Bước 3: Tối ưu hóa kép">
+                    <p class="caption">Hình 4: Bước 3 - Tối ưu hóa kép: Ghép cặp phân loại cho Tiền cảnh và tối đa hóa Entropy cho Hậu cảnh (OOD).</p>
+                </div>
+                <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+                <a class="next" onclick="plusSlides(1)">&#10095;</a>
+
+            </div>
+            <h3>Cơ chế hoạt động chi tiết:</h3>
+            <ul style="list-style-type: none; padding-left: 0;">
+                <li style="margin-bottom: 15px; padding-left: 20px; border-left: 3px solid var(--accent-color);">
+                    <strong>1. Frozen Encoders (Image & Text):</strong> 
+                    Sử dụng mạng CLIP đã đóng băng (biểu tượng ❄️) để trích xuất đặc trưng. Ảnh đầu vào được mã hóa thành các <em>Local Logits</em> (lưới đặc trưng cục bộ) và <em>Global Logits</em> (đặc trưng toàn cục).
+                </li>
+                
+                <li style="margin-bottom: 15px; padding-left: 20px; border-left: 3px solid var(--accent-color);">
+                    <strong>2. ALK Selection Mechanism (KL Divergence):</strong> 
+                    Hệ thống so sánh phân phối xác suất giữa vùng cục bộ và toàn cục thông qua độ đo <strong>KL Divergence</strong>.
+                    <br>
+                    - Nếu <strong>KL &le; &epsilon;</strong>: Vùng ảnh được xác định là <strong>Foreground</strong> (đối tượng chính).
+                    <br>
+                    - Nếu <strong>KL &gt; &epsilon;</strong>: Vùng ảnh được xác định là <strong>Background</strong> (nền hoặc nhiễu).
+                </li>
+                
+                <li style="margin-bottom: 15px; padding-left: 20px; border-left: 3px solid var(--accent-color);">
+                    <strong>3. Dual-Branch Optimization:</strong>
+                    <br>
+                    - <strong>Foreground:</strong> Được ghép cặp (Pairing) để tối ưu hóa khả năng nhận diện đối tượng chính xác (ID Classification).
+                    <br>
+                    - <strong>Background:</strong> Được đưa qua hàm <em>Entropy Loss</em> để tối đa hóa độ bất định, giúp mô hình học cách từ chối các mẫu lạ (OOD Detection) thay vì cố gắng phân loại chúng.
+                </li>
+            </ul>
+        </section>
+
+        <section id="bigdata">
+            <h2>Hiệu quả triển khai Big Data (Ablation Study)</h2>
+            <p>Chúng tôi đã thực hiện nghiên cứu loại trừ để đánh giá tác động của MapReduce. Kết quả cho thấy việc chuyển đổi từ xử lý ảnh Online sang đọc vector Offline mang lại hiệu suất vượt trội.</p>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Chỉ số đánh giá</th>
+                        <th>Không dùng MapReduce (Online)</th>
+                        <th>Có dùng MapReduce (Offline)</th>
+                        <th>Cải thiện</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Thời gian 1 Epoch</td>
+                        <td>~ 4 phút 25 giây</td>
+                        <td class="highlight">~ 58 giây</td>
+                        <td>Nhanh hơn 4.5 lần</td>
+                    </tr>
+                    <tr>
+                        <td>Tổng thời gian (50 Epochs)</td>
+                        <td>~ 4 giờ</td>
+                        <td class="highlight">48 phút 22 giây</td>
+                        <td>Tiết kiệm 80%</td>
+                    </tr>
+                    <tr>
+                        <td>VRAM tiêu thụ</td>
+                        <td>10.5 GB</td>
+                        <td class="highlight">1.2 GB</td>
+                        <td>Giảm 88%</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="img-container">
+                <img src="logTraining.png" alt="Log Training">
+            </div>
+            <p class="caption">Hình 2: Log thực tế cho thấy quá trình huấn luyện hoàn tất trong 48 phút.</p>
+        </section>
+
+        <section id="results">
+            <h2>Kết quả Thực nghiệm (CIFAR-10)</h2>
+            <p>Mô hình được đánh giá trên tập chuẩn CIFAR-10 với thiết lập Few-shot (16 mẫu/lớp). Kết quả cho thấy APT vượt trội hơn các phương pháp nền tảng.</p>
+            
+            <div class="features-grid" style="grid-template-columns: 1fr 1fr; max-width: 100%; margin: 0; padding: 0;">
+                <div style="background: #f4f8fb; padding: 20px; border-radius: 8px;">
+                    <h3 style="margin-top:0; color: #1e3c72;">Độ chính xác (Accuracy)</h3>
+                    <p style="font-size: 2rem; font-weight: bold; color: var(--accent-color); margin: 10px 0;">94.80%</p>
+                    <p>Cao hơn Zero-shot CLIP (~89%) và CoOp (~94.2%).</p>
+                </div>
+                <div style="background: #f4f8fb; padding: 20px; border-radius: 8px;">
+                    <h3 style="margin-top:0; color: #1e3c72;">OOD Detection (AUROC)</h3>
+                    <p style="font-size: 2rem; font-weight: bold; color: var(--accent-color); margin: 10px 0;">96.4%</p>
+                    <p>Trung bình trên các tập dữ liệu nhiễu (SVHN, LSUN, CIFAR-100).</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2024 APT Research Project. Khoa Công nghệ Thông tin.</p>
+        <p>Thực hiện bởi: BuiMinhTien - GVHD: TranAnhDat</p>
+    </footer>
+
+    <script>
+        let slideIndex = 1;
+        showSlides(slideIndex);
+
+        // Hàm điều khiển mũi tên Next/Prev
+        function plusSlides(n) {
+            showSlides(slideIndex += n);
+        }
+
+        // Hàm hiển thị slide chính
+        function showSlides(n) {
+            let i;
+            let slides = document.getElementsByClassName("carousel-slide");
+            
+            // Nếu bấm Next ở slide cuối thì quay về slide đầu
+            if (n > slides.length) {slideIndex = 1}    
+            
+            // Nếu bấm Prev ở slide đầu thì quay về slide cuối
+            if (n < 1) {slideIndex = slides.length}
+            
+            // Ẩn tất cả các slide
+            for (i = 0; i < slides.length; i++) {
+                slides[i].style.display = "none";  
+            }
+            
+            // Hiển thị slide hiện tại
+            slides[slideIndex-1].style.display = "block";  
+        }
+    </script>
+    </body>
+</html>
