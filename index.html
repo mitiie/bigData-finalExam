@@ -177,7 +177,86 @@
             text-align: justify;
         }
 
-        /* Image styling */
+        /* --- CSS CHO CAROUSEL (CẬP NHẬT MỚI ĐỂ CHỐNG VỠ ẢNH) --- */
+        .carousel-container {
+            position: relative;
+            max-width: 1000px; /* Giới hạn chiều rộng */
+            width: 100%;
+            margin: 30px auto;
+            border-radius: 12px;
+            border: 1px solid #eee;
+            overflow: hidden;
+            background: #fff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        /* Class chung cho slide của cả 2 phần */
+        .carousel-slide-arch, .carousel-slide-bd {
+            display: none;
+            text-align: center;
+            background-color: #fcfcfc;
+        }
+
+        /* Định dạng ảnh bên trong slide: Fix cứng chiều cao tối đa để không bị dài */
+        .carousel-slide-arch img, .carousel-slide-bd img {
+            width: 100%;
+            height: auto;
+            max-height: 550px; /* Giới hạn chiều cao ảnh */
+            object-fit: contain; /* Đảm bảo ảnh không bị méo */
+            display: block;
+            margin: 0 auto;
+        }
+
+        .caption {
+            padding: 15px;
+            background: #f8f9fa;
+            color: #555;
+            font-size: 0.9rem;
+            font-style: italic;
+            border-top: 1px solid #eee;
+            margin: 0;
+            text-align: center;
+        }
+
+        /* Nút mũi tên Previous và Next */
+        .prev, .next {
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%); /* Căn giữa chính xác theo chiều dọc */
+            width: auto;
+            padding: 16px;
+            color: white;
+            font-weight: bold;
+            font-size: 20px;
+            transition: 0.3s ease;
+            border-radius: 0 3px 3px 0;
+            user-select: none;
+            background-color: rgba(0,0,0,0.3);
+            z-index: 10;
+        }
+
+        .next {
+            right: 0;
+            border-radius: 3px 0 0 3px;
+        }
+
+        .prev:hover, .next:hover {
+            background-color: var(--accent-color);
+        }
+
+        /* Hiệu ứng fade chuyển cảnh */
+        .fade {
+            animation-name: fade;
+            animation-duration: 0.6s;
+        }
+
+        @keyframes fade {
+            from {opacity: .4} 
+            to {opacity: 1}
+        }
+
+        /* Image styling tĩnh (cho các ảnh không phải slide) */
         .img-container {
             width: 100%;
             margin: 20px 0;
@@ -185,85 +264,10 @@
             overflow: hidden;
             border: 1px solid #eee;
         }
-
         .img-container img {
             width: 100%;
-            height: auto;
             display: block;
         }
-
-        .caption {
-            text-align: center;
-            font-size: 0.85rem;
-            color: #888;
-            margin-top: 10px;
-            font-style: italic;
-            display: block; /* Đảm bảo caption luôn hiển thị dưới ảnh trong slide */
-        }
-
-        /* --- CSS MỚI CHO IMAGE CAROUSEL (SLIDESHOW) --- */
-        .carousel-container {
-            position: relative;
-            width: 100%;
-            margin: 20px 0;
-            border-radius: 8px;
-            border: 1px solid #eee;
-            overflow: hidden; /* Để bo tròn góc cả mũi tên nếu cần */
-            background: #fff; /* Nền trắng cho container */
-        }
-
-        /* Ẩn các slide mặc định */
-        .carousel-slide {
-            display: none;
-            padding-bottom: 15px; /* Khoảng cách cho caption bên trong */
-        }
-
-        /* Hiển thị ảnh trong slide */
-        .carousel-slide img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        /* Nút mũi tên Previous và Next */
-        .prev, .next {
-            cursor: pointer;
-            position: absolute;
-            top: 45%; /* Căn giữa theo chiều dọc ảnh (ước lượng) */
-            width: auto;
-            padding: 16px;
-            margin-top: -22px;
-            color: white;
-            font-weight: bold;
-            font-size: 24px;
-            transition: 0.3s ease;
-            border-radius: 0 3px 3px 0;
-            user-select: none;
-            background-color: rgba(0,0,0,0.3); /* Nền mờ cho dễ nhìn */
-        }
-
-        /* Vị trí nút Next ở bên phải */
-        .next {
-            right: 0;
-            border-radius: 3px 0 0 3px;
-        }
-
-        /* Hiệu ứng hover nút */
-        .prev:hover, .next:hover {
-            background-color: var(--accent-color); /* Dùng màu cam nhấn khi hover */
-        }
-
-        /* Hiệu ứng fade chuyển cảnh nhẹ nhàng */
-        .fade {
-            animation-name: fade;
-            animation-duration: 0.5s;
-        }
-
-        @keyframes fade {
-            from {opacity: .6} 
-            to {opacity: 1}
-        }
-        /* --------------------------------------------- */
 
         /* Table Styling */
         table {
@@ -305,7 +309,7 @@
             }
             .hero h1 { font-size: 2rem; }
             .features-grid { grid-template-columns: 1fr; }
-            .prev, .next { padding: 10px; font-size: 18px; } /* Nút nhỏ hơn trên mobile */
+            .carousel-slide-arch img, .carousel-slide-bd img { max-height: 300px; }
         }
     </style>
 </head>
@@ -361,39 +365,44 @@
             <h2>Kiến trúc Hệ thống (Proposed Framework)</h2>
             <p>Mô hình APT hoạt động dựa trên việc tinh chỉnh các Prompt học được (<i>W</i><sub>1</sub> &hellip; <i>W</i><sub>N</sub>) mà không làm thay đổi trọng số của mạng xương sống, kết hợp với cơ chế tách vùng ngữ nghĩa thông minh.</p>            
             
-            <p style="font-style: italic; font-size: 0.9rem; color: var(--accent-color); margin-bottom: 10px;">(Sử dụng mũi tên < > ở hai bên ảnh để xem chi tiết từng bước)</p>
+            <p style="font-style: italic; font-size: 0.9rem; color: var(--accent-color); margin-bottom: 10px; text-align: center;">(Bấm mũi tên hai bên để xem chi tiết từng bước)</p>
 
             <div class="carousel-container">
-                
-                <div class="carousel-slide fade">
-                    <img src="architecture.png" alt="Tổng quan kiến trúc APT"> <p class="caption">Hình 1: Tổng quan kiến trúc Auxiliary Prompt Tuning (APT)</p>
+                <div class="carousel-slide-arch fade">
+                    <img src="architecture.png" alt="Tổng quan kiến trúc APT"> 
+                    <p class="caption">Hình 1: Tổng quan kiến trúc Auxiliary Prompt Tuning (APT)</p>
                 </div>
 
-                <div class="carousel-slide fade">
+                <div class="carousel-slide-arch fade">
                     <img src="encoder.png" alt="Bước 1: Trích xuất đặc trưng"> 
                     <p class="caption">Hình 2: Bước 1 - Đầu vào và mã hoá.</p>
                 </div>
 
-                <div class="carousel-slide fade">
+                <div class="carousel-slide-arch fade">
                     <img src="ALK.png" alt="Bước 2: Cơ chế chọn lọc ALK">
-                    <p class="caption">Hình 3: Bước 2 - Cơ chế chọn lọc ALK sử dụng KL Divergence để phân tách vùng Tiền cảnh (Foreground) và Hậu cảnh (Background).</p>
+                    <p class="caption">Hình 3: Bước 2 - Cơ chế chọn lọc ALK sử dụng KL Divergence.</p>
                 </div>
 
-                <div class="carousel-slide fade">
+                <div class="carousel-slide-arch fade">
                     <img src="pairReg.png" alt="Bước 3: Tối ưu hóa kép">
-                    <p class="caption">Hình 4: Bước 3 - Tối ưu hóa kép: Ghép cặp phân loại cho Tiền cảnh và tối đa hóa Entropy cho Hậu cảnh (OOD).</p>
+                    <p class="caption">Hình 4: Bước 3 - Tối ưu hóa kép: Ghép cặp và Entropy Loss.</p>
                 </div>
-                <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
-                <a class="next" onclick="plusSlides(1)">&#10095;</a>
 
+                <div class="carousel-slide-arch fade">
+                    <img src="SCT.png" alt="SCT Training">
+                    <p class="caption">Hình 5: Quá trình huấn luyện ảnh trong phân phối (ID) sử dụng phương pháp SCT.</p>
+                </div>
+
+                <a class="prev" onclick="plusSlidesArch(-1)">&#10094;</a>
+                <a class="next" onclick="plusSlidesArch(1)">&#10095;</a>
             </div>
+
             <h3>Cơ chế hoạt động chi tiết:</h3>
             <ul style="list-style-type: none; padding-left: 0;">
                 <li style="margin-bottom: 15px; padding-left: 20px; border-left: 3px solid var(--accent-color);">
                     <strong>1. Frozen Encoders (Image & Text):</strong> 
                     Sử dụng mạng CLIP đã đóng băng (biểu tượng ❄️) để trích xuất đặc trưng. Ảnh đầu vào được mã hóa thành các <em>Local Logits</em> (lưới đặc trưng cục bộ) và <em>Global Logits</em> (đặc trưng toàn cục).
                 </li>
-                
                 <li style="margin-bottom: 15px; padding-left: 20px; border-left: 3px solid var(--accent-color);">
                     <strong>2. ALK Selection Mechanism (KL Divergence):</strong> 
                     Hệ thống so sánh phân phối xác suất giữa vùng cục bộ và toàn cục thông qua độ đo <strong>KL Divergence</strong>.
@@ -402,20 +411,40 @@
                     <br>
                     - Nếu <strong>KL &gt; &epsilon;</strong>: Vùng ảnh được xác định là <strong>Background</strong> (nền hoặc nhiễu).
                 </li>
-                
                 <li style="margin-bottom: 15px; padding-left: 20px; border-left: 3px solid var(--accent-color);">
                     <strong>3. Dual-Branch Optimization:</strong>
-                    <br>
-                    - <strong>Foreground:</strong> Được ghép cặp (Pairing) để tối ưu hóa khả năng nhận diện đối tượng chính xác (ID Classification).
-                    <br>
-                    - <strong>Background:</strong> Được đưa qua hàm <em>Entropy Loss</em> để tối đa hóa độ bất định, giúp mô hình học cách từ chối các mẫu lạ (OOD Detection) thay vì cố gắng phân loại chúng.
+                    - <strong>Foreground:</strong> Ghép cặp (Pairing) để tối ưu hóa nhận diện ID. <br>
+                    - <strong>Background:</strong> Tối đa hóa Entropy để học cách từ chối mẫu OOD.
                 </li>
             </ul>
         </section>
 
         <section id="bigdata">
-            <h2>Hiệu quả triển khai Big Data (Ablation Study)</h2>
-            <p>Chúng tôi đã thực hiện nghiên cứu loại trừ để đánh giá tác động của MapReduce. Kết quả cho thấy việc chuyển đổi từ xử lý ảnh Online sang đọc vector Offline mang lại hiệu suất vượt trội.</p>
+            <h2>Triển khai Big Data Pipeline</h2>            
+            <p style="font-style: italic; font-size: 0.9rem; color: var(--accent-color); margin-bottom: 10px; text-align: center;">(Quy trình xử lý dữ liệu lớn - Bấm mũi tên để xem)</p>
+
+            <div class="carousel-container">
+                <div class="carousel-slide-bd fade">
+                    <img src="bigdatav1.png" alt="HDFS Input"> 
+                    <p class="caption">Hình 1: Kiến trúc xử lý phân tán (MapReduce) cho giai đoạn mã hoá ảnh quy mô lớn.</p>
+                </div>
+
+                <div class="carousel-slide-bd fade">
+                    <img src="bigdatav2.png" alt="Map Phase"> 
+                    <p class="caption">Hình 2: Xử lý phân tán MapReduce cho giai đoạn phân vùng ảnh ALK.</p>
+                </div>
+
+                <div class="carousel-slide-bd fade">
+                    <img src="bigdatav3.png" alt="Reduce Phase">
+                    <p class="caption">Hình 3: Áp dụng MapReduce để tách ảnh và tính entropy foreground–background.</p>
+                </div>
+
+                <a class="prev" onclick="plusSlidesBD(-1)">&#10094;</a>
+                <a class="next" onclick="plusSlidesBD(1)">&#10095;</a>
+            </div>
+
+            <h3>Hiệu quả thực tế (Ablation Study)</h3>
+            <p>Kết quả thực nghiệm khi so sánh giữa phương pháp truyền thống và MapReduce:</p>
             
             <table>
                 <thead>
@@ -451,24 +480,23 @@
             <div class="img-container">
                 <img src="logTraining.png" alt="Log Training">
             </div>
-            <p class="caption">Hình 2: Log thực tế cho thấy quá trình huấn luyện hoàn tất trong 48 phút.</p>
+            <p class="caption">Hình 6: Log thực tế cho thấy quá trình huấn luyện hoàn tất trong 48 phút.</p>
         </section>
 
         <section id="results">
             <h2>Kết quả Thực nghiệm (CIFAR-10)</h2>
             <p>Mô hình được đánh giá trên tập chuẩn CIFAR-10 với thiết lập Few-shot (16 mẫu/lớp). Kết quả cho thấy APT vượt trội hơn các phương pháp nền tảng.</p>
             
-            <div class="features-grid" style="grid-template-columns: 1fr 1fr; max-width: 100%; margin: 0; padding: 0;">
-                <div style="background: #f4f8fb; padding: 20px; border-radius: 8px;">
-                    <h3 style="margin-top:0; color: #1e3c72;">Độ chính xác (Accuracy)</h3>
-                    <p style="font-size: 2rem; font-weight: bold; color: var(--accent-color); margin: 10px 0;">94.80%</p>
-                    <p>Cao hơn Zero-shot CLIP (~89%) và CoOp (~94.2%).</p>
-                </div>
-                <div style="background: #f4f8fb; padding: 20px; border-radius: 8px;">
-                    <h3 style="margin-top:0; color: #1e3c72;">OOD Detection (AUROC)</h3>
-                    <p style="font-size: 2rem; font-weight: bold; color: var(--accent-color); margin: 10px 0;">96.4%</p>
-                    <p>Trung bình trên các tập dữ liệu nhiễu (SVHN, LSUN, CIFAR-100).</p>
-                </div>
+            <div class="img-container">
+                <img src="results.png" alt="Biểu đồ so sánh kết quả thực nghiệm">
+            </div>
+            <p class="caption">Hình 7: So sánh hiệu năng và độ chính xác của APT so với các phương pháp SOTA.</p>
+
+            <div class="img-container">
+            <img src="test1.png" alt="Biểu đồ so sánh kết quả thực nghiệm">
+            <img src="test2.png" alt="Biểu đồ so sánh kết quả thực nghiệm">
+            <img src="test3.png" alt="Biểu đồ so sánh kết quả thực nghiệm">
+
             </div>
         </section>
 
@@ -480,33 +508,48 @@
     </footer>
 
     <script>
-        let slideIndex = 1;
-        showSlides(slideIndex);
+        let slideIndexArch = 1;
+        showSlidesArch(slideIndexArch);
 
-        // Hàm điều khiển mũi tên Next/Prev
-        function plusSlides(n) {
-            showSlides(slideIndex += n);
+        function plusSlidesArch(n) {
+            showSlidesArch(slideIndexArch += n);
         }
 
-        // Hàm hiển thị slide chính
-        function showSlides(n) {
+        function showSlidesArch(n) {
             let i;
-            let slides = document.getElementsByClassName("carousel-slide");
+            let slides = document.getElementsByClassName("carousel-slide-arch");
+            if (slides.length === 0) return;
+
+            if (n > slides.length) {slideIndexArch = 1}    
+            if (n < 1) {slideIndexArch = slides.length}
             
-            // Nếu bấm Next ở slide cuối thì quay về slide đầu
-            if (n > slides.length) {slideIndex = 1}    
-            
-            // Nếu bấm Prev ở slide đầu thì quay về slide cuối
-            if (n < 1) {slideIndex = slides.length}
-            
-            // Ẩn tất cả các slide
             for (i = 0; i < slides.length; i++) {
                 slides[i].style.display = "none";  
             }
+            slides[slideIndexArch-1].style.display = "block";  
+        }
+
+        let slideIndexBD = 1;
+        showSlidesBD(slideIndexBD);
+
+        function plusSlidesBD(n) {
+            showSlidesBD(slideIndexBD += n);
+        }
+
+        function showSlidesBD(n) {
+            let i;
+            let slides = document.getElementsByClassName("carousel-slide-bd");
+            if (slides.length === 0) return;
+
+            if (n > slides.length) {slideIndexBD = 1}    
+            if (n < 1) {slideIndexBD = slides.length}
             
-            // Hiển thị slide hiện tại
-            slides[slideIndex-1].style.display = "block";  
+            for (i = 0; i < slides.length; i++) {
+                slides[i].style.display = "none";  
+            }
+            slides[slideIndexBD-1].style.display = "block";  
         }
     </script>
-    </body>
+
+</body>
 </html>
